@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="testing.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@1,300&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/pixi.js@7.x/dist/pixi.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.18.0/matter.min.js"></script>
+    <title>Falling Boxes</title>
+</head>
+<body>
+    <div id="hourglass-container">
+        <div id = "canvas-container">
+            <div id="topWall" class="rectangle"></div>
+            <div id="topWallLeft" class="rectangle"></div>
+            <div id="topWallRight" class="rectangle"></div>
+            <div id="topAngleLeft" class="rectangle"></div>
+            <div id="topAngleRight" class="rectangle"></div>
+            <div id="bottomAngleLeft" class="rectangle"></div>
+            <div id="bottomAngleRight" class="rectangle"></div>
+            <div id="bottomWallLeft" class="rectangle"></div>
+            <div id="bottomWallRight" class="rectangle"></div>
+            <div id="bottomWall" class="rectangle"></div>
+            <div id="topPolygon" class="polygon"></div>
+            <div id="bottomPolygon" class="polygon"></div>
+        </div> 
+    </div>
+<script src="news.js"></script>
+<script src="hourglass.js"></script>
+<script>
+    // const angel_string = "This is how one pictures the angel of history. His face is turned toward the past. Where we perceived a chain of events, he sees one single catastrophe which keeps piling wreckage and hurls it in front of his feet. The angel would like to stay, awaken the dead, and make whole what has been smashed. But a storm is blowing from Paradise; it has got caught in his wings with such violence that the angel can no longer close them. This storm irresistibly propels him into the future to which his back is turned, while the pile of debris before him grows skyward. The storm is what we call progress.";
+    // const angel_list = angel_string.split('.');
+    // const hourglassContainer = document.getElementById('hourglass-container');
+
+    // let counter = 0; 
+    // for (let i = 0; i< 14; i++){
+    //     const angelContainer = document.createElement('div');
+    //     angelContainer.classList.add('angel-sentence-container');
+    //     angelContainer.id = `angel-sentence-container-${i}`;
+    //     hourglassContainer.appendChild(angelContainer); 
+    //     if (i == 7) {
+    //         counter = 0;
+    //     }
+    //     for (let j = 0; j<3; j++){
+    //         const angelSentence = document.createElement('span');
+    //         angelSentence.id = `angel-sentence-${i}-${j}`;
+    //         angelSentence.classList.add('angel-sentence');
+    //         angelSentence.classList.add(`s-${j}`);
+    //         const sentenceText = angel_list[counter].trim(); 
+    //         if (sentenceText.length > 0) { 
+    //             angelSentence.innerHTML = sentenceText;
+    //             angelContainer.appendChild(angelSentence); 
+    //         }
+    //     }
+    //     counter ++; 
+    // }
+    // document.getElementById('angel-sentence-container-0').style.left = '10%';
+    // document.getElementById('angel-sentence-container-0').style.top = '10%';
+    // document.getElementById('angel-sentence-container-1').style.left = '20%';
+    // document.getElementById('angel-sentence-container-1').style.top = '18%';
+    // document.getElementById('angel-sentence-container-2').style.left = '3%';
+    // document.getElementById('angel-sentence-container-2').style.top = '29%';
+    // document.getElementById('angel-sentence-container-3').style.left = '17%';
+    // document.getElementById('angel-sentence-container-3').style.top = '41%';
+    // document.getElementById('angel-sentence-container-4').style.left = '7%';
+    // document.getElementById('angel-sentence-container-4').style.top = '53%';
+    // document.getElementById('angel-sentence-container-5').style.left = '18%';
+    // document.getElementById('angel-sentence-container-5').style.top = '65%';
+    // document.getElementById('angel-sentence-container-6').style.left = '9%';
+    // document.getElementById('angel-sentence-container-6').style.top = '77%';
+
+    // document.getElementById('angel-sentence-container-7').style.left = '80%';
+    // document.getElementById('angel-sentence-container-7').style.top = '10%';
+    // document.getElementById('angel-sentence-container-8').style.left = '70%';
+    // document.getElementById('angel-sentence-container-8').style.top = '18%';
+    // document.getElementById('angel-sentence-container-9').style.left = '77%';
+    // document.getElementById('angel-sentence-container-9').style.top = '29%';
+    // document.getElementById('angel-sentence-container-10').style.left = '63%';
+    // document.getElementById('angel-sentence-container-10').style.top = '41%';
+    // document.getElementById('angel-sentence-container-11').style.left = '73%';
+    // document.getElementById('angel-sentence-container-11').style.top = '53%';
+    // document.getElementById('angel-sentence-container-12').style.left = '62%';
+    // document.getElementById('angel-sentence-container-12').style.top = '65%';
+    // document.getElementById('angel-sentence-container-13').style.left = '79%';
+    // document.getElementById('angel-sentence-container-13').style.top = '77%';
+
+    // function animateText() {
+    //     const allContainers = document.querySelectorAll('.angel-sentence-container');
+    //     allContainers.forEach(container => {
+    //         let currentIndex = 0; // Start with the first child
+    //         const children = Array.from(container.children); // Get direct children as an array
+    //         const childCount = children.length;
+
+    //         // Hide all children initially
+    //         children.forEach(child => {
+    //             child.style.opacity = 0.2; // Make them invisible
+    //         });
+
+    //         setInterval(() => {
+    //             children[currentIndex].style.opacity = 0.2;
+    //             currentIndex = (currentIndex + 1) % childCount; // Loop back to the beginning
+    //             children[currentIndex].style.opacity = 1; // Make it visible
+    //         }, 500); // Delay for 0.5 seconds
+    //     });
+
+    //     // function textEffect(sentence_array) {
+    //     //     let counter = 0;
+    //     //     return function alternateVisibility() {
+    //     //         if (counter == 0){
+    //     //             sentence_array[6].classList.remove('visible');
+    //     //         } else {
+    //     //             sentence_array[counter-1].classList.remove('visible');
+    //     //         }
+    //     //         if (counter == 7){
+    //     //             counter = 0;
+    //     //         } 
+    //     //         sentence_array[counter].classList.add('visible');
+    //     //         counter ++;
+    //     //     }
+    //     // }
+    //     // const updateVisibilityLeft = textEffect([...allSentences].slice(0,7));
+    //     // const updateVisibilityRight = textEffect([...allSentences].slice(7));
+
+    //     // setInterval(updateVisibilityLeft, 4000);
+    //     // setInterval(updateVisibilityRight, 3000);
+    // }
+
+    // // animateText();
+
+
+    // function placeRandomImages(src) {
+    //     let images = [];
+    //     for (let i = 0; i < 20; i++) {
+    //         const img = document.createElement('img');
+    //         img.src = src; 
+    //         img.className = 'background-img'; 
+    //         img.style.left = `${Math.random() * 90}%`; 
+    //         img.style.top = `${Math.random() * 90}%`;  
+    //         document.body.appendChild(img); 
+    //         images.push(img);
+    //     }
+    //     return images
+    // }
+
+    // function animateImages(){
+    //     setInterval(() => {
+    //         const viewportHeight = window.innerHeight; // Get current viewport height
+    //         document.querySelectorAll('.background-img').forEach((image) => {
+    //             // Get current top position (default to 0 if not set)
+    //             let currentTop = parseFloat(image.getBoundingClientRect().top + window.scrollY) || 0;
+                
+    //             // Calculate new top position
+    //             let newTop = currentTop + 70;
+
+    //             // If image is below the viewport, reset to the top
+    //             if (newTop > viewportHeight) {
+    //                 newTop = -image.clientHeight; // Move it to the top, out of view
+    //             }
+
+    //             image.style.top = `${newTop}px`; // Apply the new top position
+    //         });
+    //     }, 1300); 
+    // }
+
+    // function cycleOpacity(elements, index) {
+    //     // If the index exceeds the number of elements, restart from the top
+    //     if (index >= elements.length) {
+    //         index = 0; // Reset to the first element
+    //     }
+    //     const element = elements[index];
+    //     element.style.opacity = 1; 
+    //     setTimeout(() => {
+    //         element.style.opacity = 0.3;
+    //         setTimeout(() => {
+    //             cycleOpacity(elements, index + 1); 
+    //         }, 1000); 
+    //     }, 1100); 
+    // }    
+
+    // const candleImgs = placeRandomImages('./media/clock-4283597_1280.png');
+    // candleImgs.forEach((candle)=>{
+    //     candle.style.width = '0.9%';
+    // })
+    // const clockImgs = placeRandomImages('./media/clocks-33832_1280.webp');
+    // clockImgs.forEach((clock)=>{
+    //     clock.style.width = '1.1%';
+    // })
+    // const wingsImgs = placeRandomImages('./media/wings-29945_1280.png');
+    // wingsImgs.forEach((wings)=>{
+    //     wings.style.width = '2.5%';
+    // })
+
+    // animateImages();
+    // const sortedElements = Array.from(elements).sort((a, b) => a.offsetTop - b.offsetTop);
+    // cycleOpacity(sortedElements,0);
+    
+    // function randomizePositions(images) {
+    //     images.forEach((img)=>{
+    //         img.style.left = `${Math.random() * 90}%`; 
+    //         img.style.top = `${Math.random() * 90}%`;  
+    //     })
+    // }
+    // Set an interval to highlight random images every 5 seconds
+    // setInterval(highlightCandle, 1500);
+    // setInterval(() => highlightRandomImages(candleImgs), 3000);
+    // setInterval(() => highlightRandomImages(clockImgs), 2000);
+
+
+    // setInterval(randomizePositions, 30000);
+
+</script>
+</body>
+</html>

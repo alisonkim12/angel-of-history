@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Landing Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100&family=Mate&family=Playfair+Display:ital@0;1&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Sedan+SC&display=swap" rel="stylesheet">
+</head>
+<style>
+
+    /* @font-face {
+        font-family: 'Brass Hopper Head';
+        src: url('./BrassHopperHeadPersonalThin-OGqwA.otf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    } */
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .landing-page {
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+    }
+
+    .landing-page .right-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 50%;
+        height: inherit;
+        text-align: center; 
+        background-color: #f0f0f0; /* Light background color */
+    }
+
+    .landing-page .clickable-img {
+        width: 40%;
+        height: auto;   /* Maintain aspect ratio */
+        cursor: pointer; /* Show pointer cursor on hover to indicate it's clickable */
+    }
+
+    .landing-page .clickable-img:hover {
+        opacity: 0.8; /* Slightly fade the image on hover to indicate it's interactive */
+    }
+
+    .landing-page #quote {
+        font-size: 0.7em;
+        font-family: "Montserrat", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 100;
+        font-style: normal;
+        padding: 4em 4em;
+    }
+
+    .landing-page #quote span{
+        opacity: 0;
+        transition: 0.3s ease-in;
+    }
+
+    .reveal {
+        opacity: 1 !important;
+    }
+
+    .underline {
+        padding-bottom: 0.1em;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .bold{
+        font-weight: 400;
+    }
+
+    .italic{
+        font-style: italic;
+    }
+
+    .landing-page #command {
+        font-size: 0.8em;
+        font-family: "Roboto Mono", monospace;
+        font-optical-sizing: auto;
+        font-weight: 100;
+        font-style: normal;
+        padding: 2em;
+    }
+
+    .landing-page .left-container {
+        height: inherit;
+        width: 100%;
+        text-align: center; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .left-container .box-background {
+        position: absolute;
+        z-index: 1; 
+        width: 100%;
+        height: 105%;
+        overflow: hidden;
+    }
+
+    .left-container .box-background div{
+        font-size: 1em;
+        font-family: "Mate", serif;
+        font-weight: 400;
+        font-style: normal;
+        /* overflow: hidden; */
+    }
+
+    .left-container .box-background div img{
+        width: 100%; /* Ensure image width matches container width */
+        height: auto; /* Maintain aspect ratio */
+        object-fit: cover; /* Cover entire img area, cropping if necessary */
+        opacity: 0.8;
+    }
+
+    .left-container .title {
+        font-size: 7em;
+        font-family: "Playfair Display", serif;
+        font-optical-sizing: auto;
+        font-weight: 400;
+        font-style: italic;
+        color: rgba(0,0,0,0.8);
+        letter-spacing: 0.2em;
+        z-index: 1000;
+        text-align: center;
+        width: 95%;
+        overflow-y: hidden;
+        z-index: 5;
+        opacity: 0;
+    }
+
+
+</style>
+<body>
+    <div class="landing-page">
+        <div class = "left-container">
+            <div class = "box-background"></div>
+            <div class = "title">
+                <div>ANGEL</div>
+                <div>OF</div>
+                <div>HISTORY</div>
+            </div>
+        </div>
+    </div>
+    <script src= "newscontainers.js"></script>
+</body>
+</html>

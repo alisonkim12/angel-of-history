@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/ml5/dist/ml5.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+    <script src="https://unpkg.com/ml5@1.0.1/dist/ml5.min.js"></script>
+    <title>Webcam Test</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+
+        .clock-container {
+            position: relative;
+            height: 100%;
+            width: 100%; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .clock-container .clock {
+            position: relative;
+            height: 100%; 
+            width: 100%;  
+            aspect-ratio: 1 / 1; 
+            border-radius: 50%;
+        }
+
+        .clock .hand {
+            position: absolute;
+            width: 6%; 
+            height: 10%; 
+            background-color: transparent;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+
+        }
+
+        .hand div{
+            text-align: center;
+            margin: 0 auto;
+            position: relative;
+            top: 100%;
+            margin-top: 1em;
+
+        }
+
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            object-fit: cover;
+            transform: scaleX(-1); 
+            z-index: 1;
+            mask-image: radial-gradient(circle at 50% 50%, transparent 20%, black 20%, black 80%, transparent 80%);
+        }
+
+        .p5Canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover;
+            transform: scaleX(-1); 
+            display: none;
+        }
+
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0; 
+            width: 100%;
+            height: 100%;
+        }
+
+        #mask {
+            position: absolute;
+            top: 0;
+            left: 0; 
+            width: 100%;
+            height: 100%;
+
+        }
+        #mask rect {
+            position: absolute;
+        }
+
+        .hand.one { left: 66.67%; top: 16.67%; }
+        .hand.two { left: 83.34%; top: 33.34%; }
+        .hand.three { left: 100%; top: 50%; }
+        .hand.four { left: 83.34%; top: 66.67%; }
+        .hand.five { left: 66.67%; top: 83.34%; }
+        .hand.six { left: 50%; top: 100%; }
+        .hand.seven { left: 33.34%; top: 83.34%; }
+        .hand.eight { left: 16.67%; top: 66.67%; }
+        .hand.nine { left: 0%; top: 50%; }
+        .hand.ten { left: 16.67%; top: 33.34%; }
+        .hand.eleven { left: 33.34%; top: 16.67%; }
+        .hand.twelve { left: 50%; top: 0%; }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="clock">
+            <div class="hand one" style="--i: 1;">
+                <div>1</div>
+            </div>
+            <div class="hand two" style="--i: 2;">
+                <div>2</div>
+            </div>
+            <div class="hand three" style="--i: 3;">
+                <div>3</div>
+            </div>
+            <div class="hand four" style="--i: 4;">
+                <div>4</div>
+            </div>
+            <div class="hand five" style="--i: 5;">
+                <div>5</div>
+            </div>
+            <div class="hand six" style="--i: 6;">
+                <div>6</div>
+            </div>
+            <div class="hand seven" style="--i: 7;">
+                <div>7</div>
+            </div>
+            <div class="hand eight" style="--i: 8;">
+                <div>8</div>
+            </div>
+            <div class="hand nine" style="--i: 9;">
+                <div>9</div>
+            </div>
+            <div class="hand ten" style="--i: 10;">
+                <div>10</div>
+            </div>
+            <div class="hand eleven" style="--i: 11;">
+                <div>11</div>
+            </div>
+            <div class="hand twelve" style="--i: 12;">
+                <div>12</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let video;
+        let handPose;
+        let predictions = [];
+        let handSequence = []
+        // const fingerTrack = document.createElement('div');
+        // fingerTrack.style.width = '20px';
+        // fingerTrack.style.height = '20px';
+        // fingerTrack.style.position = 'absolute';
+        // fingerTrack.style.backgroundColor = 'blue';
+        // fingerTrack.style.zIndex = 20;
+        // fingerTrack.style.transform = 'translate(-50%, -50%)';
+        // document.body.append(fingerTrack);
+
+        function preload() {
+            handPose = ml5.handPose();
+        }
+
+        async function setup() {
+            video = createCapture(VIDEO);
+            const adjustedVideoHeight = window.innerWidth * (3/4)
+            video.size(window.innerWidth, adjustedVideoHeight); 
+            await createVideoMask(video);
+            handPose.detectStart(video, gotHands);
+        }
+
+        function gotHands(results) {
+            hands = results;
+            detectIndexFinger(hands);
+        }
+
+        async function createVideoMask(video) {
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNS, "svg");
+            svg.setAttribute("width", "100%");
+            svg.setAttribute("height", "100%");
+            svg.setAttribute("id", "mask");
+
+            const mask = document.createElementNS(svgNS, "mask");
+            mask.setAttribute("id", "videoMask");
+
+            const backgroundRect = document.createElementNS(svgNS, "rect");
+            backgroundRect.setAttribute("x", "0");
+            backgroundRect.setAttribute("y", "0");
+            backgroundRect.setAttribute("width", "100%");
+            backgroundRect.setAttribute("height", "100%");
+            backgroundRect.setAttribute("fill", "black"); // Opaque part of the mask
+            mask.appendChild(backgroundRect);
+
+            const hands = document.querySelectorAll('.hand');
+
+            hands.forEach(hand => {
+                const handRect = hand.getBoundingClientRect();
+                const transparentRect = document.createElementNS(svgNS, "rect");
+                transparentRect.setAttribute("x", handRect.left);
+                transparentRect.setAttribute("y", handRect.top);
+                transparentRect.setAttribute("width", handRect.width);
+                transparentRect.setAttribute("height", handRect.height);
+                transparentRect.setAttribute("fill", "white"); // Transparent part of the mask
+                mask.appendChild(transparentRect);
+            });
+
+            svg.appendChild(mask);
+
+            video.elt.style.mask = "url(#videoMask)";
+            video.elt.style.webkitMask = "url(#videoMask)";
+
+            document.body.appendChild(svg);
+        }
+
+        function detectIndexFinger(predictions) {
+            const hands = document.querySelectorAll('.hand');
+            // const indexFingerTip = predictions[0].index_finger_tip;
+            if (predictions.length > 0) {
+                const indexFingerTip = predictions[0].index_finger_tip;
+                let x = indexFingerTip['x'];
+                let y = indexFingerTip['y'];
+                const adjustedX = window.innerWidth - x;
+                // fingerTrack.style.left = `${adjustedX}px`;
+                // fingerTrack.style.top = `${y}px`;
+                hands.forEach(hand => {
+                    const rect = hand.getBoundingClientRect();
+                    const handX = rect.left;
+                    const handY = rect.top;
+                    const handWidth = rect.width;
+                    const handHeight = rect.height;
+                    const handNumber = hand.querySelector('div'); 
+                    if (adjustedX >= handX && adjustedX <= handX + handWidth && y >= handY && y <= handY + handHeight) {
+                        detectSequence(hand, handNumber);
+                    } else {
+                        // hand.style.backgroundColor = 'rgba(255,255,255,0.3)';
+                        hand.style.boxShadow = 'none';
+                        handNumber.style.textShadow = 'none';
+                    }
+                });
+            }
+        }
+
+        function detectSequence (hand, handNumber) {
+            let number = Number(handNumber.innerText)
+            if (handSequence.length == 0 && number === 12) {
+                handSequence.push(number);
+                hand.style.boxShadow = '0 0 10px rgba(150, 150, 150, 0.9), 0 0 20px rgba(130, 130, 130, 0.7), 0 0 30px rgba(110, 110, 110, 0.5)';
+                handNumber.style.textShadow = '0 0 5px rgba(150, 150, 150, 0.9), 0 0 7px rgba(130, 130, 130, 0.6), 0 0 12px rgba(110, 110, 110, 0.4)';
+            }
+            else if (number === 1 && (handSequence[handSequence.length - 1] === 12)) { 
+                handSequence.push(number);
+                hand.style.boxShadow = '0 0 10px rgba(150, 150, 150, 0.9), 0 0 20px rgba(130, 130, 130, 0.7), 0 0 30px rgba(110, 110, 110, 0.5)';
+                handNumber.style.textShadow = '0 0 5px rgba(150, 150, 150, 0.9), 0 0 7px rgba(130, 130, 130, 0.6), 0 0 12px rgba(110, 110, 110, 0.4)';
+            }
+            else if (number === (handSequence[handSequence.length - 1] + 1)) {
+                handSequence.push(number);
+                hand.style.boxShadow = '0 0 10px rgba(150, 150, 150, 0.9), 0 0 20px rgba(130, 130, 130, 0.7), 0 0 30px rgba(110, 110, 110, 0.5)';
+                handNumber.style.textShadow = '0 0 5px rgba(150, 150, 150, 0.9), 0 0 7px rgba(130, 130, 130, 0.6), 0 0 12px rgba(110, 110, 110, 0.4)';
+            }
+            else if (number === handSequence[handSequence.length - 1]) {
+                hand.style.boxShadow = '0 0 10px rgba(150, 150, 150, 0.9), 0 0 20px rgba(130, 130, 130, 0.7), 0 0 30px rgba(110, 110, 110, 0.5)';
+                handNumber.style.textShadow = '0 0 5px rgba(150, 150, 150, 0.9), 0 0 7px rgba(130, 130, 130, 0.6), 0 0 12px rgba(110, 110, 110, 0.4)';
+            }
+            else {
+                handSequence = [];
+            }
+
+        }
+
+        window.addEventListener('resize', () => {
+            const adjustedVideoHeight = window.innerWidth * (3/4)
+            video.size(window.innerWidth, adjustedVideoHeight); 
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            preload();
+        });
+
+    </script>
+</body>
+</html>
